@@ -1,0 +1,62 @@
+/**
+ * @file jquery.terminal.css
+ * @brief Embedded terminal
+ * @author Jonathan Giroux (Bloutiouf)
+ * @site https://github.com/Bloutiouf/jquery.terminal
+ * @version 2.0
+ * @license MIT license <http://www.opensource.org/licenses/MIT>
+ *
+ * Terminal style: white text on black background.
+ */
+
+.jqueryTerminal {
+	color: white;
+	background-color: black;
+	font-size: 14px;
+	font-family: Courier New;
+	padding: 0;
+	margin: 0;
+	overflow: hidden;
+}
+
+.jqueryTerminal * {
+	color: white;
+	background-color: black;
+	font-size: 14px;
+	font-family: Courier New;
+	padding: 0;
+	margin: 0;
+}
+
+.jqueryTerminal > .content, .jqueryTerminal > .popup {
+	position: absolute;
+	top: 0;
+	left: 0;
+	overflow: hidden;
+}
+
+.jqueryTerminal > .popup {
+	border: 1px solid white;
+	background-color: #444444;
+	padding: 4px;
+	display: none;
+}
+
+.jqueryTerminal > .scrollarrow, .jqueryTerminal > .scrollbar {
+	position: absolute;
+	right: 0;
+	color: black;
+	background-color: white;
+	cursor: pointer;
+}
+
+.jqueryTerminal > .scrollbar {
+	color: white;
+}
+
+.jqueryTerminal > input {
+	position: absolute;
+	border: 0;
+	padding: 0;
+	margin: 0;
+}

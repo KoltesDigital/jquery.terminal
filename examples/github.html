@@ -1,0 +1,207 @@
+<!DOCTYPE html>
+<html>
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+<script src="http://code.jquery.com/jquery-1.6.2.min.js"></script>
+<script src="https://raw.github.com/carhartl/jquery-cookie/master/jquery.cookie.js"></script>
+<script src="../jquery.caret.1.02.min.js"></script>
+<script src="../jquery.terminal.js"></script>
+<script>
+	// from https://gist.github.com/82181
+	$.getJSONP = function(options) {
+		options.dataType = 'jsonp';
+		$.ajax(options);
+
+		var script = $(document.getElementsByTagName('head')[0].firstChild);
+		script[0].onerror = function(error) {
+			script.remove();
+			if (options.error) {
+				options.error({}, "error", error);
+			}
+		};
+	};
+
+	var base = 'http://github.com/api/v2/json/';
+
+	var githubListener = {
+		commands : {
+			'repo' : [ 'Accesses Github repo information.' ],
+			'user' : [ 'Accesses Github user information.' ]
+		},
+		complete : function(args, async) {
+			switch (args[0]) {
+				case 'repo':
+					if (args.length == 4 && args[1] == 'show') {
+						$.getJSONP({
+							url : base + 'repos/show/' + args[2],
+							success : function(data) {
+								async($.terminal.among(args[3], $.map(data.repositories, function(repo) {
+									return repo.name;
+								})));
+							},
+							error : function() {
+								async([]);
+							}
+						});
+						return true;
+					}
+					if (args.length > 2) {
+						return [];
+					}
+					return $.terminal.among(args[1], [ 'search', 'show' ]);
+
+				case 'user':
+					if (args.length > 2) {
+						return [];
+					}
+					return $.terminal.among(args[1], [ 'search', 'show' ]);
+			}
+		},
+		execute : function(args, async) {
+			switch (args[0]) {
+				case 'repo':
+					if (args.length < 2) {
+						throw 'user: action required.';
+					}
+					switch (args[1]) {
+						case 'search':
+							$.getJSONP({
+								url : base + 'repos/search/' + args[2],
+								success : function(data) {
+									data.repositories.sort(function(a, b) {
+										return b.score - a.score;
+									});
+									async($.map(data.repositories, function(repo) {
+										return '\txshow user ' + repo.owner + '\t-' + repo.owner + '\tx / \ta' + repo.url + '\t-' + repo.name + '\ta';
+									}));
+								},
+								error : function() {
+									async([]);
+								}
+							});
+							return true;
+
+						case 'show':
+							if (args.length < 3) {
+								throw 'user: user name required.';
+							}
+							if (args.length < 4) {
+								$.getJSONP({
+									url : base + 'repos/show/' + args[2],
+									success : function(data) {
+										async([ '\txshow user ' + args[2] + '\t-' + args[2] + '\tx\'s public repositories:' ].concat($.map(data.repositories, function(repo) {
+											return '\txrepo show ' + $.terminal.escape(repo.owner) + ' ' + $.terminal.escape(repo.name) + '\t-' + repo.name + '\tx ';
+										})));
+									},
+									error : function() {
+										async([ 'User not found.' ]);
+									}
+								});
+								return true;
+							}
+							$.getJSONP({
+								url : base + 'repos/show/' + args[2] + '/' + args[3],
+								data : args[4] ? ('page=' + args[4]) : '',
+								success : function(data) {
+									var ret = [];
+									ret.push('\tp14 \txuser show ' + data.repository.owner + '\t-' + data.repository.owner + '\tx / \ta' + data.repository.url + '\t-' + data.repository.name + '\ta');
+									if (data.repository.description) {
+										ret.push('Description:\tp14 ' + data.repository.description);
+									}
+									if (data.repository.homepage) {
+										ret.push('Homepage:\tp14 \ta' + data.repository.homepage + '\t-' + data.repository.homepage + '\ta');
+									}
+									ret.push('Watchers:\tp14 ' + data.repository.watchers);
+									ret.push('Forks:\tp14 ' + data.repository.forks + '');
+									async(ret);
+								},
+								error : function() {
+									async([ 'Repository not found.' ]);
+								}
+							});
+							return true;
+					}
+					throw 'repo: unknown action ' + args[1] + '.';
+
+				case 'user':
+					if (args.length < 2) {
+						throw 'user: action required.';
+					}
+					switch (args[1]) {
+						case 'search':
+							$.getJSONP({
+								url : base + 'user/search/' + args[2],
+								success : function(data) {
+									data.users.sort(function(a, b) {
+										return b.score - a.score;
+									});
+									async($.map(data.users, function(user) {
+										return '\txuser show ' + user.login + '\t-' + user.login + '\tx';
+									}));
+								},
+								error : function() {
+									async([]);
+								}
+							});
+							return true;
+
+						case 'show':
+							$.getJSONP({
+								url : base + 'user/show/' + args[2],
+								success : function(data) {
+									var ret = [];
+									if (data.user.gravatar_id) {
+										ret.push('\tmhttp://gravatar.com/avatar/' + data.user.gravatar_id + '\tm')
+									}
+									ret.push('\tp15 \tahttps://github.com/' + data.user.login + '\t-' + data.user.login + '\ta');
+									if (data.user.name) {
+										ret.push('Name:\tp15 \tb' + data.user.name + '\tb');
+									}
+									if (data.user.company) {
+										ret.push('Company:\tp15 \tahttp://www.google.com/search?q=' + data.user.company + '\t-' + data.user.company + '\ta');
+									}
+									if (data.user.location) {
+										ret.push('Location:\tp15 \tahttp://maps.google.com/maps?q=' + data.user.location + '\t-' + data.user.location + '\ta');
+									}
+									if (data.user.blog) {
+										ret.push('Website:\tp15 \ta' + data.user.blog + '\t-' + data.user.blog + '\ta');
+									}
+									ret.push('Public repos:\tp15 \txrepo show ' + $.terminal.escape(data.user.login) + '\t-' + data.user.public_repo_count + '\tx');
+									ret.push('Followers:\tp15 ' + data.user.followers_count);
+									ret.push('Followings:\tp15 ' + data.user.following_count);
+									async(ret);
+								},
+								error : function() {
+									async([ 'User not found.' ]);
+								}
+							});
+							return true;
+					}
+					throw 'user: unknown action ' + args[1] + '.';
+			}
+		}
+	};
+
+	$(function() {
+		$('#terminal').terminal({
+			listeners : [ githubListener ],
+			welcome : 'jquery.terminal example - github\n\
+This terminal has some commands to retrieve information from \tahttps://www.github.com\t-github\ta.'
+		});
+	});
+</script>
+<link rel="stylesheet" type="text/css" href="../jquery.terminal.css" />
+<style type="text/css">
+#terminal {
+	position: absolute;
+	top: 0;
+	left: 0;
+	width: 100%;
+	height: 100%;
+}
+</style>
+</head>
+<body>
+	<div id="flickr"></div>
+	<div id="terminal"></div>
+</body>
+</html>

@@ -1,0 +1,55 @@
+<!DOCTYPE html>
+<html>
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+<script src="http://code.jquery.com/jquery-1.6.2.min.js"></script>
+<script src="https://raw.github.com/carhartl/jquery-cookie/master/jquery.cookie.js"></script>
+<script src="../jquery.caret.1.02.min.js"></script>
+<script src="../jquery.terminal.js"></script>
+<script>
+$(function() {
+	$('#terminal1, #terminal2').terminal({
+		welcome: 'jquery.terminal example - Cookies usage\n\
+Reload the page after typing some commands.'
+	});
+});
+</script>
+<link rel="stylesheet" type="text/css" href="../jquery.terminal.css" />
+<style type="text/css">
+#terminal1 {
+	position: absolute;
+	top: 0;
+	left: 0;
+	width: 100%;
+	height: 50%;
+}
+
+#terminal2 {
+	position: absolute;
+	bottom: 0;
+	left: 0;
+	width: 100%;
+	height: 50%;
+
+	background-color: white;
+}
+
+#terminal2 * {
+	color: black;
+	background-color: white;
+}
+
+#terminal2 > .scrollarrow, #terminal2 > .scrollbar {
+	color: white;
+	background-color: black;
+}
+
+#terminal2 > .popup {
+	border-color: black;
+}
+</style>
+</head>
+<body>
+<div id="terminal1"></div>
+<div id="terminal2"></div>
+</body>
+</html>
