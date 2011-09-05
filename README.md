@@ -39,7 +39,6 @@ Examples
 
 [Test the demo online!](http://bloutiouf.github.com/jquery.terminal)
 
-
 The [examples](https://github.com/Bloutiouf/jquery.terminal/blob/master/examples) directory contains some examples:
 
 * [cookies.html](https://github.com/Bloutiouf/jquery.terminal/blob/master/examples/cookies.html) shows the independence of different terminals, and to customize CSS
@@ -51,6 +50,6 @@ Misc
 
 Licensed under a MIT license, see the [LICENSE file](https://github.com/Bloutiouf/jquery.terminal/blob/master/LICENSE).
 
-Uses the [jQuery caret plugin](http://code.google.com/p/jcaret/) by C. F., Wong, licensed under MIT license.
+Uses the [jQuery caret plugin](http://code.google.com/p/jcaret/) by C. F., Wong ([Cloudgen Examplet Store](http://cloudgen.w0ng.hk)), licensed under MIT license.
 
 Official site: https://github.com/Bloutiouf/jquery.terminal

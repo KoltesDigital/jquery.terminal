@@ -3,23 +3,8 @@
 <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
 <script src="http://code.jquery.com/jquery-1.6.2.min.js"></script>
 <script src="https://raw.github.com/carhartl/jquery-cookie/master/jquery.cookie.js"></script>
-<script src="../jquery.caret.1.02.min.js"></script>
 <script src="../jquery.terminal.js"></script>
 <script>
-	// from https://gist.github.com/82181
-	$.getJSONP = function(options) {
-		options.dataType = 'jsonp';
-		$.ajax(options);
-
-		var script = $(document.getElementsByTagName('head')[0].firstChild);
-		script[0].onerror = function(error) {
-			script.remove();
-			if (options.error) {
-				options.error({}, "error", error);
-			}
-		};
-	};
-
 	var base = 'http://github.com/api/v2/json/';
 
 	var githubListener = {

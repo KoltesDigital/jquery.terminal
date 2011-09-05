@@ -3,7 +3,7 @@
  * @brief Embedded terminal
  * @author Jonathan Giroux (Bloutiouf)
  * @site https://github.com/Bloutiouf/jquery.terminal
- * @version 2.0
+ * @version 2.1
  * @license MIT license <http://www.opensource.org/licenses/MIT>
  * 
  * jquery.terminal is a jQuery plugin which displays an interactive terminal in
@@ -90,7 +90,20 @@
 			return strip($2);
 		}).replace(/\t(t|p\d* )/g, ' ');
 	}
-	;
+
+	// from https://gist.github.com/82181
+	$.getJSONP = function(options) {
+		options.dataType = 'jsonp';
+		$.ajax(options);
+
+		var script = $(document.getElementsByTagName('head')[0].firstChild);
+		script[0].onerror = function(error) {
+			script.remove();
+			if (options.error) {
+				options.error({}, 'error', error);
+			}
+		};
+	};
 
 	$.fn.terminal = function(options) {
 
@@ -328,10 +341,10 @@
 										}
 									}
 								});
-								var separator = '\tp' + (max + 2) + ' ';
+								var separator = '\tx\tp' + (max + 2) + ' ';
 								$.each(listeners, function(i, listener) {
 									$.merge(ret, $.map(listener.commands, function(value, key) {
-										return key + separator + value[0];
+										return '\txhelp ' + key + '\t-' + key + separator + value[0];
 									}));
 								});
 								ret.sort();
@@ -684,24 +697,26 @@
 				return secondTree;
 			};
 
-			var showPopup = function(text) {
-				if (popupTimeout) {
-					clearTimeout(popupTimeout);
+			function showPopup(text) {
+				if (options.popupTime) {
+					if (popupTimeout) {
+						clearTimeout(popupTimeout);
+					}
+	
+					popup.text(text);
+					popup.css('left', ((terminal.width() - popup.width()) / 2) + 'px');
+					popup.css('top', ((terminal.height() - popup.height()) / 2) + 'px');
+					popup.show();
+	
+					popupTimeout = setTimeout(function() {
+						popup.hide();
+						popupTimeout = null;
+					}, options.popupTime);
 				}
-
-				popup.text(text);
-				popup.css('left', ((terminal.width() - popup.width()) / 2) + 'px');
-				popup.css('top', ((terminal.height() - popup.height()) / 2) + 'px');
-				popup.show();
-
-				popupTimeout = setTimeout(function() {
-					popup.hide();
-					popupTimeout = null;
-				}, options.popupTime);
-			};
+			}
 
 			// parse magic sequences
-			var toHtml = function(s) {
+			function toHtml(s) {
 				var r = [ '<span>' ];
 				var bold = false, colored = false, execute = false, italic = false, link = false, underlined = false;
 
@@ -863,10 +878,10 @@
 
 				r[++o] = '</span>';
 				return r.join('');
-			};
+			}
 
 			// resize the content, to be called when terminal is resized
-			var resize = function() {
+			function resize() {
 				size = {
 					columns : Math.floor(terminal.width() / character.width) - 1,
 					rows : Math.floor(terminal.height() / character.height)
@@ -884,9 +899,9 @@
 				setTimeout(function() {
 					showPopup('Size: ' + size.columns + 'x' + size.rows);
 				}, 0);
-			};
+			}
 
-			var updateScrollbar = function() {
+			function updateScrollbar() {
 				var scrollHeight = content[0].scrollHeight;
 				if (scrollHeight > content.height()) {
 					bar.show();
@@ -901,9 +916,9 @@
 				} else {
 					bar.hide();
 				}
-			};
+			}
 
-			var focusInput = function() {
+			function focusInput() {
 				content.scrollTop(content[0].scrollHeight);
 
 				input.css('top', content.children(":last").position().top);
@@ -911,9 +926,9 @@
 				input.val(input.val());
 
 				updateScrollbar();
-			};
+			}
 
-			var updateInput = function() {
+			function updateInput() {
 				var last = content.children(":last");
 				var offset = last.position();
 				var top = offset.top;
@@ -923,9 +938,9 @@
 					top : top,
 					left : left
 				}).width(content.width() - left);
-			};
+			}
 
-			var showInput = function(val) {
+			function showInput(val) {
 				content.append(toHtml(options.prompt));
 				content.scrollTop(content[0].scrollHeight);
 
@@ -938,10 +953,10 @@
 				input.val(val);
 
 				updateScrollbar();
-			};
+			}
 
 			// split a command string into an array of arguments
-			var split = function(command) {
+			function split(command) {
 				// expand variables
 				var newCommand;
 				var state = states.beginning;
@@ -1135,7 +1150,7 @@
 				}
 
 				return command;
-			};
+			}
 
 			// at the end of execute
 			function endExecution(result) {
@@ -1712,9 +1727,7 @@
 			});
 
 			$(document).mouseup(function() {
-				if (barOffset) {
-					barOffset = null;
-				}
+				barOffset = null;
 			});
 
 			// allow text selection without focusing on input
@@ -1770,3 +1783,14 @@
 if (!JSON) {
 	document.write('<script type="text/javascript" src="https://raw.github.com/douglascrockford/JSON-js/master/json2.js"></script>');
 }
+
+/*
+ *
+ * Copyright (c) 2010 C. F., Wong (<a href="http://cloudgen.w0ng.hk">Cloudgen Examplet Store</a>)
+ * Licensed under the MIT License:
+ * http://www.opensource.org/licenses/mit-license.php
+ *
+ */
+﻿(function(k,e,i,j){k.fn.caret=function(b,l){var a,c,f=this[0],d=k.browser.msie;if(typeof b==="object"&&typeof b.start==="number"&&typeof b.end==="number"){a=b.start;c=b.end}else if(typeof b==="number"&&typeof l==="number"){a=b;c=l}else if(typeof b==="string")if((a=f.value.indexOf(b))>-1)c=a+b[e];else a=null;else if(Object.prototype.toString.call(b)==="[object RegExp]"){b=b.exec(f.value);if(b!=null){a=b.index;c=a+b[0][e]}}if(typeof a!="undefined"){if(d){d=this[0].createTextRange();d.collapse(true);
+d.moveStart("character",a);d.moveEnd("character",c-a);d.select()}else{this[0].selectionStart=a;this[0].selectionEnd=c}this[0].focus();return this}else{if(d){c=document.selection;if(this[0].tagName.toLowerCase()!="textarea"){d=this.val();a=c[i]()[j]();a.moveEnd("character",d[e]);var g=a.text==""?d[e]:d.lastIndexOf(a.text);a=c[i]()[j]();a.moveStart("character",-d[e]);var h=a.text[e]}else{a=c[i]();c=a[j]();c.moveToElementText(this[0]);c.setEndPoint("EndToEnd",a);g=c.text[e]-a.text[e];h=g+a.text[e]}}else{g=
+f.selectionStart;h=f.selectionEnd}a=f.value.substring(g,h);return{start:g,end:h,text:a,replace:function(m){return f.value.substring(0,g)+m+f.value.substring(h,f.value[e])}}}}})(jQuery,"length","createRange","duplicate");
