@@ -187,6 +187,11 @@
 			welcome : 'jquery.terminal example - github\n\
 This terminal has some commands to retrieve information from \tahttps://www.github.com\t-github\ta.'
 		});
+		
+		$('#snippets a').click(function() {
+			$('#terminal').terminal($(this).text());
+			return false;
+		})
 	});
 </script>
 <link rel="stylesheet" type="text/css" href="jquery.terminal.css" />
@@ -196,12 +201,46 @@ This terminal has some commands to retrieve information from \tahttps://www.gith
 	top: 0;
 	left: 0;
 	width: 100%;
-	height: 100%;
+	height: 50%;
+}
+
+#snippets {
+	position: absolute;
+	bottom: 0;
+	left: 0;
+	width: 100%;
+	height: 50%;
+}
+
+#snippets > * {
+	display: block;
+	padding: 5px;
+}
+
+#snippets > a {
+	font-family: monospace;
+}
+
+#snippets > a:hover {
+	background-color: lightgray;
 }
 </style>
 </head>
 <body>
-	<div id="flickr"></div>
-	<div id="terminal"></div>
+<div id="terminal"></div>
+<div id="snippets">
+<span>Try these commands:</span>
+<a href="#">clear</a>
+<a href="#">echo hello world</a>
+<a href="#">echo hello world ~ count</a>
+<a href="#">list hello world ~ count</a>
+<a href="#">list hello world | echo ~ count</a>
+<a href="#">seq 10 20 | slice 2 6 | join ', '</a>
+<a href="#">prompt 'Please give a number:' | seq | foreach i : ( (echo $i is ; test $i % 2 == 1 && echo odd || echo even) | echo )</a>
+<a href="#">set var "hello world!" "how are you?" ; list 'get var' 'echo \$var' 'list \$var' | foreach command : (echo == $command == ; split ' ' $command | exec) ; unset var</a>
+<a href="#">help | slice 2 0 | replace '^([^ ]+).*?$' '$1' | foreach command : (echo === $command === ; help $command ; echo)</a>
+<a href="#">user show Bloutiouf</a>
+<a href="#">repo search jquery</a>
+</div>
 </body>
 </html>
