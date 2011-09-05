@@ -48,10 +48,6 @@
 
 				execute : function(args) {
 					console.log('execute:', args);
-				},
-
-				help : function(args) {
-					console.log('help:', args);
 				}
 			}
 		}
