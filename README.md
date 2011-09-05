@@ -45,6 +45,22 @@ The [examples](https://github.com/Bloutiouf/jquery.terminal/blob/master/examples
 * [github.html](https://github.com/Bloutiouf/jquery.terminal/blob/master/examples/github.html) adds commands to access to [github](https://github.com/)
 * [simple.html](https://github.com/Bloutiouf/jquery.terminal/blob/master/examples/simple.html) is a basic example, with examples of commandes
 
+Changelog
+---------
+
+### 2.1
+
+* Embeds caret plugin, no `jquery.caret.js` file to include anymore.
+* Embeds `$.getJSONP`.
+* Adds links in help function.
+* Puts the links in orange by default.
+* `popup` option can be set to null to never show popup.
+* Fixes scroll, which now works only if the cursor is over the terminal.
+
+### 2.0
+
+Considered as the first version, you don't want to see version 1 :)
+
 Misc
 ----
 
