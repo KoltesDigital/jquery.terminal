@@ -71,7 +71,7 @@
 										return b.score - a.score;
 									});
 									async($.map(data.repositories, function(repo) {
-										return '\txshow user ' + repo.owner + '\t-' + repo.owner + '\tx / \ta' + repo.url + '\t-' + repo.name + '\ta';
+										return '\txuser show ' + repo.owner + '\t-' + repo.owner + '\tx / \txrepo show ' + repo.owner + ' ' + repo.name + '\t-' + repo.name + '\tx';
 									}));
 								},
 								error : function() {
