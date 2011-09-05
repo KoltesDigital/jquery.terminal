@@ -238,7 +238,7 @@ Type \tbhelp\tb to see a list of available commands.'
 <a href="#">list hello world | echo ~ count</a>
 <a href="#">seq 10 20 | slice 2 6 | join ', '</a>
 <a href="#">prompt 'Please give a number:' | seq | foreach i : ( (echo $i is ; test $i % 2 == 1 && echo odd || echo even) | echo )</a>
-<a href="#">set var "hello world!" "how are you?" ; list 'get var' 'echo \$var' 'list \$var' | foreach command : (echo == $command == ; | exec $command ) ; unset var</a>
+<a href="#">set var "hello world!" "how are you?" ; list 'get var' 'echo \$var' 'list \$var' | foreach command : (echo == $command == ; exec $command ) ; unset var</a>
 <a href="#">help | slice 2 0 | replace '^([^ ]+).*?$' '$1' | foreach command : (echo === $command === ; help $command ; echo)</a>
 <a href="#">user show Bloutiouf</a>
 <a href="#">repo search jquery</a>
