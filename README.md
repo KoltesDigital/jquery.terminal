@@ -5,7 +5,9 @@ jquery.terminal is a [jQuery](http://jquery.com/) plugin which displays an inter
 
 *It is not a SSH or Linux terminal!* See [Anyterm](http://anyterm.org/) or [Ajaxterm](https://github.com/antonylesuisse/qweb) for that. Instead, jquery.terminal allows you to use custom commands.
 
-I wrote this plugin to easily communicate with my systems without building HTML interfaces. Even if you don't have this need, you may still like this geeky stuff.
+I wrote this plugin to easily communicate with my systems without building HTML interfaces. And I wouldn't recommend you to use it as public front-end: the purpose of this plugin is to build administration interfaces.
+
+Even if you don't have this need, you may still like this geeky stuff.
 
 Features
 --------
