@@ -12,15 +12,15 @@ Features
 
 ### Customizable
 
-Add custom commands with listeners.
+Add custom commands with [listeners](https://github.com/Bloutiouf/jquery.terminal/wiki/Listeners).
 
 The default style displays white texts on black background, you may change it either by editing `jquery.terminal.css` (global change) or by adding CSS in your page. 
 
-### Command pipelining and other operators
+### Command flow and operators
 
-Command pipeling is at the root of this terminal. The principle is very simple: the first command's output is added to the second command's argument list.
+[Command flow](https://github.com/Bloutiouf/jquery.terminal/wiki/Command-flow) is the root concept of the terminal. Arguments are values given to a command, which in return gives output values.
 
-Output is therefore like arguments, that is, it is a list rather than a plain text. You should always keep in mind how many elements the commands give as output. For instance, `echo hello world` gives one element (`hello world`) whereas `list hello world` gives two elements (`hello` and `world`).
+[Operators](https://github.com/Bloutiouf/jquery.terminal/wiki/Operators) bind commands together, manipulating arguments and outputs of each two operands. Each operator has its own way to execute commands.
 
 ### Context-aware completion
 
@@ -28,7 +28,7 @@ At any moment, press TAB and you will see suggestions which fit well in the cont
 
 ### Handles asynchronous requests
 
-Commands can give result either synchronously or asynchronously, which come in handy when they deal with AJAX requests. Works for completion too. 
+Commands can give result either synchronously or asynchronously, which comes in handy when they deal with AJAX requests. Works for completion too!
 
 ### Uses cookie information if jQuery.cookie is available
 
@@ -49,7 +49,7 @@ The [examples](https://github.com/Bloutiouf/jquery.terminal/blob/master/examples
 Misc
 ----
 
-Licensed under a MIT license, see the [LICENSE file](https://github.com/Bloutiouf/jquery.tr/blob/master/LICENSE).
+Licensed under a MIT license, see the [LICENSE file](https://github.com/Bloutiouf/jquery.terminal/blob/master/LICENSE).
 
 Uses the [jQuery caret plugin](http://code.google.com/p/jcaret/) by C. F., Wong, licensed under MIT license.
 
