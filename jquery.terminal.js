@@ -55,7 +55,7 @@
 
 	var defaults = {
 		history : 50,
-		popupTime : 1000,
+		popup : 1000,
 		prompt : '> ',
 		tab : 8
 	};
@@ -92,18 +92,20 @@
 	}
 
 	// from https://gist.github.com/82181
-	$.getJSONP = function(options) {
-		options.dataType = 'jsonp';
-		$.ajax(options);
-
-		var script = $(document.getElementsByTagName('head')[0].firstChild);
-		script[0].onerror = function(error) {
-			script.remove();
-			if (options.error) {
-				options.error({}, 'error', error);
-			}
+	if (!$.getJSONP) {
+		$.getJSONP = function(options) {
+			options.dataType = 'jsonp';
+			$.ajax(options);
+	
+			var script = $(document.getElementsByTagName('head')[0].firstChild);
+			script[0].onerror = function(error) {
+				script.remove();
+				if (options.error) {
+					options.error({}, 'error', error);
+				}
+			};
 		};
-	};
+	}
 
 	$.fn.terminal = function(options) {
 
@@ -698,7 +700,7 @@
 			};
 
 			function showPopup(text) {
-				if (options.popupTime) {
+				if (options.popup) {
 					if (popupTimeout) {
 						clearTimeout(popupTimeout);
 					}
@@ -711,7 +713,7 @@
 					popupTimeout = setTimeout(function() {
 						popup.hide();
 						popupTimeout = null;
-					}, options.popupTime);
+					}, options.popup);
 				}
 			}
 
@@ -1749,7 +1751,7 @@
 				}
 			});
 
-			var mousewheel = function(e) {
+			function mousewheel(e) {
 				if (!e) {
 					e = window.event;
 				}
@@ -1765,9 +1767,15 @@
 				terminal.children("input").css('top', content.children(":last").position().top);
 				updateScrollbar();
 			};
-			if (window.addEventListener)
-				window.addEventListener('DOMMouseScroll', mousewheel, false);
-			window.onmousewheel = document.onmousewheel = mousewheel;
+			
+			var mousewheelName =(/Firefox/i.test(navigator.userAgent))? 'DOMMouseScroll' : 'mousewheel';
+			
+			if (terminal[0].attachEvent) {
+				terminal[0].attachEvent('on' + mousewheelevt, mousewheel);
+			} else if (terminal[0].addEventListener) {
+				terminal[0].addEventListener('DOMMouseScroll', mousewheel, false);
+			}
+			
 			$(window).resize(resize);
 
 			if (options.welcome != null) {
