@@ -54,7 +54,7 @@
 	};
 
 	var defaults = {
-		history : 50,
+		history : 20,
 		popup : 1000,
 		prompt : '> ',
 		tab : 8
