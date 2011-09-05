@@ -39,10 +39,6 @@
 		among : among,
 		escape : escape,
 		listeners : {
-			ajax : {
-
-			},
-
 			firebug : {
 				commands : {},
 
