@@ -3,7 +3,7 @@
  * @brief Embedded terminal
  * @author Jonathan Giroux (Bloutiouf)
  * @site https://github.com/Bloutiouf/jquery.terminal
- * @version 2.1
+ * @version 2.2
  * @license MIT license <http://www.opensource.org/licenses/MIT>
  * 
  * jquery.terminal is a jQuery plugin which displays an interactive terminal in
@@ -881,6 +881,14 @@
 				r[++o] = '</span>';
 				return r.join('');
 			}
+			
+			function attachHandlers(html) {
+				html.find('img').load(updateInput);
+				html.find('a[href^="#"]').click(function() {
+					execute($(this).attr('href').substr(1));
+					return false;
+				});
+			}
 
 			// resize the content, to be called when terminal is resized
 			function resize() {
@@ -943,7 +951,9 @@
 			}
 
 			function showInput(val) {
-				content.append(toHtml(options.prompt));
+				var html = $(toHtml(options.prompt));
+				attachHandlers(html);
+				content.append(html);
 				content.scrollTop(content[0].scrollHeight);
 
 				terminal.append(input);
@@ -1160,14 +1170,12 @@
 					result = [ result.toString() ];
 				}
 
+				variables.LAST = $.map(result, strip);
+				
 				if (result.length) {
 					var data = result.join('\n');
 					var html = $(toHtml(data));
-					html.find('img').load(updateInput);
-					html.find('a[href^="#"]').click(function() {
-						execute($(this).attr('href').substr(1));
-						return false;
-					});
+					attachHandlers(html);
 					content.append(html);
 					content.append('<br/>');
 				}
@@ -1508,7 +1516,10 @@
 											out[++o] = result[i];
 										}
 										data = out.join('');
-										content.append(toHtml(data) + '<br/>');
+										var html = $(toHtml(data));
+										attachHandlers(html);
+										content.append(html);
+										content.append('<br/>');
 
 										// extend command line if possible
 										var newArg = '';
@@ -1779,7 +1790,10 @@
 			$(window).resize(resize);
 
 			if (options.welcome != null) {
-				content.append(toHtml(options.welcome) + '<br/>');
+				var html = $(toHtml(options.welcome));
+				attachHandlers(html);
+				content.append(html);
+				content.append('<br/>');
 			}
 
 			showInput();
