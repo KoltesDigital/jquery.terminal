@@ -50,6 +50,13 @@ The [examples](https://github.com/Bloutiouf/jquery.terminal/blob/master/examples
 Changelog
 ---------
 
+### 2.2
+
+* Changes position magic sequence.
+* Adds `$LAST` variable.
+* Attaches event handlers to prompt and welcome message.
+* Adds help link in example `simple.html`.
+
 ### 2.1
 
 * Embeds caret plugin, no `jquery.caret.js` file to include anymore.
