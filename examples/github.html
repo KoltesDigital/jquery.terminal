@@ -89,15 +89,15 @@
 								data : args[4] ? ('page=' + args[4]) : '',
 								success : function(data) {
 									var ret = [];
-									ret.push('\tp14 \txuser show ' + data.repository.owner + '\t-' + data.repository.owner + '\tx / \ta' + data.repository.url + '\t-' + data.repository.name + '\ta');
+									ret.push('\tp14\tp\txuser show ' + data.repository.owner + '\t-' + data.repository.owner + '\tx / \ta' + data.repository.url + '\t-' + data.repository.name + '\ta');
 									if (data.repository.description) {
-										ret.push('Description:\tp14 ' + data.repository.description);
+										ret.push('Description:\tp14\tp' + data.repository.description);
 									}
 									if (data.repository.homepage) {
-										ret.push('Homepage:\tp14 \ta' + data.repository.homepage + '\t-' + data.repository.homepage + '\ta');
+										ret.push('Homepage:\tp14\tp\ta' + data.repository.homepage + '\t-' + data.repository.homepage + '\ta');
 									}
-									ret.push('Watchers:\tp14 ' + data.repository.watchers);
-									ret.push('Forks:\tp14 ' + data.repository.forks + '');
+									ret.push('Watchers:\tp14\tp' + data.repository.watchers);
+									ret.push('Forks:\tp14\tp' + data.repository.forks);
 									async(ret);
 								},
 								error : function() {
@@ -138,22 +138,22 @@
 									if (data.user.gravatar_id) {
 										ret.push('\tmhttp://gravatar.com/avatar/' + data.user.gravatar_id + '\tm')
 									}
-									ret.push('\tp15 \tahttps://github.com/' + data.user.login + '\t-' + data.user.login + '\ta');
+									ret.push('\tp15\tp\tahttps://github.com/' + data.user.login + '\t-' + data.user.login + '\ta');
 									if (data.user.name) {
-										ret.push('Name:\tp15 \tb' + data.user.name + '\tb');
+										ret.push('Name:\tp15\tp\tb' + data.user.name + '\tb');
 									}
 									if (data.user.company) {
-										ret.push('Company:\tp15 \tahttp://www.google.com/search?q=' + data.user.company + '\t-' + data.user.company + '\ta');
+										ret.push('Company:\tp15\tp\tahttp://www.google.com/search?q=' + data.user.company + '\t-' + data.user.company + '\ta');
 									}
 									if (data.user.location) {
-										ret.push('Location:\tp15 \tahttp://maps.google.com/maps?q=' + data.user.location + '\t-' + data.user.location + '\ta');
+										ret.push('Location:\tp15\tp\tahttp://maps.google.com/maps?q=' + data.user.location + '\t-' + data.user.location + '\ta');
 									}
 									if (data.user.blog) {
-										ret.push('Website:\tp15 \ta' + data.user.blog + '\t-' + data.user.blog + '\ta');
+										ret.push('Website:\tp15\tp\ta' + data.user.blog + '\t-' + data.user.blog + '\ta');
 									}
-									ret.push('Public repos:\tp15 \txrepo show ' + $.terminal.escape(data.user.login) + '\t-' + data.user.public_repo_count + '\tx');
-									ret.push('Followers:\tp15 ' + data.user.followers_count);
-									ret.push('Followings:\tp15 ' + data.user.following_count);
+									ret.push('Public repos:\tp15\tp\txrepo show ' + $.terminal.escape(data.user.login) + '\t-' + data.user.public_repo_count + '\tx');
+									ret.push('Followers:\tp15\tp' + data.user.followers_count);
+									ret.push('Followings:\tp15\tp' + data.user.following_count);
 									async(ret);
 								},
 								error : function() {
