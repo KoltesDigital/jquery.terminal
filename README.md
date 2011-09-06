@@ -50,6 +50,10 @@ The [examples](https://github.com/Bloutiouf/jquery.terminal/blob/master/examples
 Changelog
 ---------
 
+### 2.3
+
+* Fixes a compatibility bug with *Internet Explorer* and *Opera*.
+
 ### 2.2
 
 * Changes position magic sequence.
