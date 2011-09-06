@@ -3,7 +3,7 @@
  * @brief Embedded terminal
  * @author Jonathan Giroux (Bloutiouf)
  * @site https://github.com/Bloutiouf/jquery.terminal
- * @version 2.2
+ * @version 2.3
  * @license MIT license <http://www.opensource.org/licenses/MIT>
  * 
  * jquery.terminal is a jQuery plugin which displays an interactive terminal in
@@ -1782,9 +1782,9 @@
 			var mousewheelName =(/Firefox/i.test(navigator.userAgent))? 'DOMMouseScroll' : 'mousewheel';
 			
 			if (terminal[0].attachEvent) {
-				terminal[0].attachEvent('on' + mousewheelevt, mousewheel);
+				terminal[0].attachEvent('on' + mousewheelName, mousewheel);
 			} else if (terminal[0].addEventListener) {
-				terminal[0].addEventListener('DOMMouseScroll', mousewheel, false);
+				terminal[0].addEventListener(mousewheelName, mousewheel, false);
 			}
 			
 			$(window).resize(resize);
