@@ -88,7 +88,7 @@
 	function strip(arg) {
 		return arg.replace(/\t(a|b|c|h|i|u|x)(?:(?:.*?)\t-)?(.*?)\t\1/g, function(match, $1, $2) {
 			return strip($2);
-		}).replace(/\t(t|p\d* )/g, ' ');
+		}).replace(/\t(t|p.*?\tp)/g, ' ');
 	}
 
 	// from https://gist.github.com/82181
@@ -343,7 +343,7 @@
 										}
 									}
 								});
-								var separator = '\tx\tp' + (max + 2) + ' ';
+								var separator = '\tx\tp' + (max + 2) + '\tp';
 								$.each(listeners, function(i, listener) {
 									$.merge(ret, $.map(listener.commands, function(value, key) {
 										return '\txhelp ' + key + '\t-' + key + separator + value[0];
@@ -796,7 +796,7 @@
 
 								case 'p':
 									++i;
-									var space = s.indexOf(' ', i);
+									var space = s.indexOf('\tp', i);
 									if (space < 0) {
 										space = s.length;
 									}
@@ -805,7 +805,7 @@
 										r[++o] = new Array(pos + 1).join('&nbsp;');
 									}
 									l += pos;
-									i = space;
+									i = space + 1;
 									break;
 
 								case 't':
@@ -1503,7 +1503,7 @@
 												if (i % cols == 0)
 													out[++o] = '\n';
 												else
-													out[++o] = '\tp' + (i % cols) * mult + ' ';
+													out[++o] = '\tp' + (i % cols) * mult + '\tp';
 											}
 											out[++o] = result[i];
 										}
