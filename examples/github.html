@@ -10,8 +10,8 @@
 
 	var githubListener = {
 		commands : {
-			'repo' : [ 'Accesses Github repo information.' ],
-			'user' : [ 'Accesses Github user information.' ]
+			'repo' : [ 'Accesses GitHub repo information.' ],
+			'user' : [ 'Accesses GitHub user information.' ]
 		},
 		complete : function(args, async) {
 			switch (args[0]) {
@@ -170,8 +170,8 @@
 	$(function() {
 		$('#terminal').terminal({
 			listeners : [ githubListener ],
-			welcome : 'jquery.terminal example - github\n\
-This terminal has some commands to retrieve information from \tahttps://www.github.com\t-github\ta.'
+			welcome : 'jquery.terminal example - GitHub\n\
+This terminal has some commands to retrieve information from \tahttps://www.github.com\t-GitHub\ta.'
 		});
 	});
 </script>
