@@ -36,16 +36,21 @@ Commands can give result either synchronously or asynchronously, which comes in 
 
 Simply include `jquery.cookie.js` before `jquery.terminal.js` and that's it. With the cookie plugin, the command history and variables will be automatically saved and restored. You may need `clear` to erase these variables.
 
-Examples
---------
+Getting started
+---------------
 
-[Test the demo online!](http://bloutiouf.github.com/jquery.terminal)
+[Try the demo online!](http://bloutiouf.github.com/jquery.terminal)
 
 The [examples](https://github.com/Bloutiouf/jquery.terminal/blob/master/examples) directory contains some examples:
 
 * [cookies.html](https://github.com/Bloutiouf/jquery.terminal/blob/master/examples/cookies.html) shows the independence of different terminals, and to customize CSS
-* [github.html](https://github.com/Bloutiouf/jquery.terminal/blob/master/examples/github.html) adds commands to access to [github](https://github.com/)
+* [github.html](https://github.com/Bloutiouf/jquery.terminal/blob/master/examples/github.html) adds commands to access to [GitHub](https://github.com/)
 * [simple.html](https://github.com/Bloutiouf/jquery.terminal/blob/master/examples/simple.html) is a basic example, with examples of commandes
+
+[The wiki](https://github.com/Bloutiouf/jquery.terminal/wiki) contains a lot of additional information. You may be interested in reading:
+
+* How to [integrate the plugin to your site](https://github.com/Bloutiouf/jquery.terminal/wiki/Usage)
+* How the [commands](https://github.com/Bloutiouf/jquery.terminal/wiki/Command-flow) and [operators](https://github.com/Bloutiouf/jquery.terminal/wiki/Operators) work
 
 Changelog
 ---------
