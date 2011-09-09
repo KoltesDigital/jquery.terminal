@@ -55,6 +55,13 @@ The [examples](https://github.com/Bloutiouf/jquery.terminal/blob/master/examples
 Changelog
 ---------
 
+### 2.4
+
+* Adds action call: `$().terminal(string action, ...)`.
+* Replaces execution call with action call `execute`.
+* Adds action calls `addListeners`, `removeListeners` and `options`.
+* Adds `listeners` and `variables` to the `options`.
+
 ### 2.3
 
 * Fixes a compatibility bug with *Internet Explorer* and *Opera*.
