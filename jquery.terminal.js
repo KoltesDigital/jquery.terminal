@@ -3,7 +3,7 @@
  * @brief Embedded terminal
  * @author Jonathan Giroux (Bloutiouf)
  * @site https://github.com/Bloutiouf/jquery.terminal
- * @version 2.3
+ * @version 2.4
  * @license MIT license <http://www.opensource.org/licenses/MIT>
  * 
  * jquery.terminal is a jQuery plugin which displays an interactive terminal in
@@ -21,6 +21,9 @@
 
 (function($) {
 
+	// key for .data(), change it if it conflicts
+	var dataName = 'terminal';
+	
 	function among(command, possibilities) {
 		return $.map(possibilities, function(value) {
 			if (value.substr(0, command.length) == command) {
@@ -57,7 +60,9 @@
 		history : 20,
 		popup : 1000,
 		prompt : '> ',
-		tab : 8
+		tab : 8,
+		listeners: [],
+		variables: {}
 	};
 
 	var htmlEntities = {
@@ -107,22 +112,65 @@
 		};
 	}
 
-	$.fn.terminal = function(options) {
+	$.fn.terminal = function(globalOptions) {
 
-		if (typeof options == 'string') {
-			return this.each(function() {
-				var input = $(this).children('input');
-				input.val(options);
-				input.keydown();
-			});
+		if (typeof globalOptions == 'string') {
+			var args = $.makeArray(arguments);
+			
+			switch (globalOptions) {
+				case 'execute':
+					return this.each(function() {
+						var input = $(this).children('input');
+						input.val(args[1]);
+						input.keydown();
+					});
+
+				case 'addListeners':
+					var newListeners = (Object.prototype.toString.call(args[1]) === '[object Array]') ? args[1] : args.slice(1);
+					return this.each(function() {
+						var terminal = $(this);
+						var options = terminal.data(dataName);
+						options.listeners = newListeners.concat(options.listeners);
+						terminal.data(dataName, options);
+					});
+					break;
+
+				case 'removeListeners':
+					var oldListeners = (Object.prototype.toString.call(args[1]) === '[object Array]') ? args[1] : args.slice(1);
+					return this.each(function() {
+						var terminal = $(this);
+						var options = terminal.data(dataName);
+						for (var listener in oldListeners) {
+							for (var i in options.listeners) {
+								if (oldListeners[listeners] === options.listeners[i]) {
+									delete options.listeners[i];
+									break;
+								}
+							}
+						}
+						terminal.data(dataName, options);
+					});
+					break;
+					
+				case 'options':
+					if (args[1] !== undefined) {
+						return this.data(dataName, args[1]);
+					}
+					return this.data(dataName);
+					
+				default:
+					throw 'Unknown action.';
+			}
 		}
 
-		options = $.extend(defaults, options);
+		globalOptions = $.extend(defaults, globalOptions);
 
 		return this.each(function() {
 
 			var terminal = $(this);
 
+			var options = {};
+			
 			var character;
 			var size;
 
@@ -137,10 +185,6 @@
 			var currentHistory;
 			var currentCommand;
 
-			var listeners;
-
-			var variables = {};
-
 			var executionTree;
 			var asyncResult;
 
@@ -151,7 +195,7 @@
 				if (cookie) {
 					cookie = JSON.parse(cookie);
 					history = cookie.history;
-					variables = cookie.variables;
+					options.variables = cookie.variables;
 				}
 			}
 
@@ -192,7 +236,7 @@
 
 						case 'get':
 						case 'unset':
-							return among(args[args.length - 1], $.map(variables, function(value, key) {
+							return among(args[args.length - 1], $.map(options.variables, function(value, key) {
 								return key;
 							}));
 
@@ -201,7 +245,7 @@
 								return;
 							}
 							var possibilities = [];
-							$.each(listeners, function(i, listener) {
+							$.each(options.listeners, function(i, listener) {
 								for ( var command in listener.commands) {
 									if ($.inArray(command, possibilities) < 0) {
 										possibilities.push(command);
@@ -216,7 +260,7 @@
 								return defaultListener.complete(args.slice(1));
 							}
 							var possibilities = [];
-							$.each(listeners, function(i, listener) {
+							$.each(options.listeners, function(i, listener) {
 								for ( var command in listener.commands) {
 									if ($.inArray(command, possibilities) < 0) {
 										possibilities.push(command);
@@ -243,7 +287,7 @@
 								history = [];
 							};
 							var clearVariables = function() {
-								variables = {};
+								options.variables = {};
 							};
 							if (args.length == 1) {
 								clearScreen();
@@ -315,7 +359,7 @@
 						case 'get':
 							if (args.length > 1) {
 								return $.map(args.slice(1), function(arg) {
-									return variables[arg] || [];
+									return options.variables[arg] || [];
 								});
 							} else {
 								throw 'get: variable name required.';
@@ -324,7 +368,7 @@
 						case 'help':
 							if (args.length > 1) {
 								var ret;
-								$.each(listeners, function(i, listener) {
+								$.each(options.listeners, function(i, listener) {
 									if (listener.commands[args[1]]) {
 										ret = listener.commands[args[1]];
 									}
@@ -336,7 +380,7 @@
 							} else {
 								var ret = [];
 								var max = 0;
-								$.each(listeners, function(i, listener) {
+								$.each(options.listeners, function(i, listener) {
 									for ( var command in listener.commands) {
 										if (command.length > max) {
 											max = command.length;
@@ -344,7 +388,7 @@
 									}
 								});
 								var separator = '\tx\tp' + (max + 2) + '\tp';
-								$.each(listeners, function(i, listener) {
+								$.each(options.listeners, function(i, listener) {
 									$.merge(ret, $.map(listener.commands, function(value, key) {
 										return '\txhelp ' + key + '\t-' + key + separator + value[0];
 									}));
@@ -424,7 +468,7 @@
 
 						case 'set':
 							if (args.length > 1) {
-								variables[args[1]] = args.slice(2);
+								options.variables[args[1]] = args.slice(2);
 								return [];
 							} else {
 								throw 'set: variable name required.';
@@ -470,7 +514,7 @@
 
 						case 'unset':
 							if (args.length > 1) {
-								delete variables[args[1]];
+								delete options.variables[args[1]];
 								return [];
 							} else {
 								throw 'unset: variable name required.';
@@ -480,12 +524,25 @@
 				}
 			};
 
-			listeners = (options.listeners || []).concat([ defaultListener ]);
+			$.extend(options, globalOptions);
+			
+			$.merge(options.listeners, [ defaultListener ]);
 
+			function loadOptions() {
+				options = terminal.data(dataName);
+			}
+
+			function saveOptions() {
+				terminal.data(dataName, options);
+			}
+			
+			saveOptions();
+			
 			// transform a command line to an execution tree
-			var parse = function(command) {
+			function parse(command) {
+				
 				// split commands
-				var firstPass = function(node, i) {
+				function firstPass(node, i) {
 					var state = states.beginning;
 					var newCommand;
 					var start;
@@ -649,10 +706,10 @@
 					}
 
 					return i;
-				};
+				}
 
 				// build a tree
-				var secondPass = function(nodeIn, nodeOut) {
+				function secondPass(nodeIn, nodeOut) {
 					if (nodeIn.length == 1) {
 						if (nodeIn[0].length) {
 							return secondPass(nodeIn[0], nodeOut);
@@ -686,7 +743,7 @@
 							return false;
 						}
 					});
-				};
+				}
 
 				var firstTree = [];
 
@@ -697,7 +754,7 @@
 				secondPass(firstTree, secondTree);
 
 				return secondTree;
-			};
+			}
 
 			function showPopup(text) {
 				if (options.popup) {
@@ -1023,7 +1080,7 @@
 									}
 								}
 								var name = command.substring(i, space);
-								var value = variables[name];
+								var value = options.variables[name];
 								i = space;
 								if (!bracket) {
 									--i;
@@ -1067,7 +1124,7 @@
 									}
 								}
 								var name = command.substring(i, space);
-								var value = variables[name];
+								var value = options.variables[name];
 								i = space;
 								if (!bracket) {
 									--i;
@@ -1170,7 +1227,8 @@
 					result = [ result.toString() ];
 				}
 
-				variables.LAST = $.map(result, strip);
+				options.variables.LAST = $.map(result, strip);
+				saveOptions();
 				
 				if (result.length) {
 					var data = result.join('\n');
@@ -1183,7 +1241,7 @@
 				if ($.cookie) {
 					$.cookie(cookieName, JSON.stringify({
 						history : history,
-						variables : variables
+						variables : options.variables
 					}));
 				}
 
@@ -1229,7 +1287,7 @@
 					}
 
 					if (command.length > 0) {
-						$.each(listeners, function(i, listener) {
+						$.each(options.listeners, function(i, listener) {
 							result = listener.execute(command, asyncExecute);
 							if (result) {
 								return false;
@@ -1305,7 +1363,7 @@
 							
 							case 'foreach':
 								if (command.length > 1) {
-									var value = variables[command[1]];
+									var value = options.variables[command[1]];
 									
 									if (node.args == null) {
 										$.merge(command, args);
@@ -1315,14 +1373,14 @@
 									
 									while (node.args.length > 0) {
 										var arg = node.args.shift();
-										variables[command[1]] = [ arg ];
+										options.variables[command[1]] = [ arg ];
 										var result = exec(node.second, []);
 										if (result === true) {
 											node.args.unshift(arg);
 											if (value == null) {
-												delete variables[command[1]];
+												delete options.variables[command[1]];
 											} else {
-												variables[command[1]] = value;
+												options.variables[command[1]] = value;
 											}
 											return true;
 										}
@@ -1331,9 +1389,9 @@
 									}
 									
 									if (value == null) {
-										delete variables[command[1]];
+										delete options.variables[command[1]];
 									} else {
-										variables[command[1]] = value;
+										options.variables[command[1]] = value;
 									}
 									
 									delete node.args;
@@ -1377,6 +1435,7 @@
 			}
 			
 			function complete() {
+				loadOptions();
 				
 				var caret = input.caret();
 
@@ -1421,7 +1480,7 @@
 							var result;
 							var asyncResult;
 
-							var copyListeners = $.merge([], listeners);
+							var copyListeners = $.merge([], options.listeners);
 
 							function asyncComplete(asyncResult) {
 								result = asyncResult;
@@ -1432,7 +1491,7 @@
 								// complete command
 								if (index == 0) {
 									result = [];
-									$.each(listeners, function(i, listener) {
+									$.each(options.listeners, function(i, listener) {
 										$.merge(result, $.map(listener.commands, function(value, key) {
 											if (key.substr(0, pos) == search) {
 												return key;
@@ -1570,6 +1629,8 @@
 			}
 
 			function execute(inputString) {
+				loadOptions();
+				
 				var command = inputString || input.val().replace('\t', ' ');
 
 				if (command.length > 0) {

@@ -176,7 +176,7 @@ Type \txhelp\t-help\tx to see a list of available commands.'
 		});
 		
 		$('#snippets a').click(function() {
-			$('#terminal').terminal($(this).text());
+			$('#terminal').terminal('execute', $(this).text());
 			return false;
 		})
 	});
