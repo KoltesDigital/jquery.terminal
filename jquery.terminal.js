@@ -3,7 +3,7 @@
  * @brief Embedded terminal
  * @author Jonathan Giroux (Bloutiouf)
  * @site https://github.com/Bloutiouf/jquery.terminal
- * @version 2.4
+ * @version 2.5
  * @license MIT license <http://www.opensource.org/licenses/MIT>
  * 
  * jquery.terminal is a jQuery plugin which displays an interactive terminal in
@@ -91,9 +91,9 @@
 	var evalRegExp = /^[0-9+\-*\/%(). =!<>]*$/;
 
 	function strip(arg) {
-		return arg.replace(/\t(a|b|c|h|i|u|x)(?:(?:.*?)\t-)?(.*?)\t\1/g, function(match, $1, $2) {
+		return arg && arg.replace(/\t(a|b|c|i|m|u|x)(?:.*?\t\-)?(.*?)\t\1/g, function(match, $1, $2) {
 			return strip($2);
-		}).replace(/\t(t|p.*?\tp)/g, ' ');
+		}).replace(/\t(t|(p|h).*?\t\2)/g, ' ');
 	}
 
 	// from https://gist.github.com/82181

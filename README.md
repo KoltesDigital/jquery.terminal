@@ -55,6 +55,12 @@ The [examples](https://github.com/Bloutiouf/jquery.terminal/blob/master/examples
 Changelog
 ---------
 
+### 2.5
+
+* Fixes magic sequences escape.
+
+An error with search commands in GitHub example is fixed.
+
 ### 2.4
 
 * Adds action call: `$().terminal(string action, ...)`.
