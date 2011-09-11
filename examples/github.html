@@ -8,6 +8,10 @@
 <script>
 	var base = 'http://github.com/api/v2/json/';
 
+	function sanitizeSearchURL(url) {
+		return url.replace(/([^A-Za-z0-9\-_~])+/g, '+');
+	}
+	
 	var githubListener = {
 		commands : {
 			'repo' : [ 'Accesses GitHub repo information.' ],
@@ -51,7 +55,7 @@
 					switch (args[1]) {
 						case 'search':
 							$.getJSONP({
-								url : base + 'repos/search/' + args[2],
+								url : base + 'repos/search/' + sanitizeSearchURL(args[2]),
 								success : function(data) {
 									data.repositories.sort(function(a, b) {
 										return b.score - a.score;
@@ -115,7 +119,7 @@
 					switch (args[1]) {
 						case 'search':
 							$.getJSONP({
-								url : base + 'user/search/' + args[2],
+								url : base + 'user/search/' + sanitizeSearchURL(args[2]),
 								success : function(data) {
 									data.users.sort(function(a, b) {
 										return b.score - a.score;
