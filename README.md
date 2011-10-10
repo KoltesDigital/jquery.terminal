@@ -58,8 +58,13 @@ Changelog
 ### 2.5
 
 * Fixes magic sequences escape.
-
-An error with search commands in GitHub example is fixed.
+* Fixes an error with search commands in GitHub example (#1).
+* Fixes a missing style with non-fullscreen terminals.
+* Fixes mousescroll event propagation (#2, #3).
+* Adds an example of non-fullscreen terminal.
+* Adds built-in listener `command`.
+* Changes arrow style (#2).
+* Fixes input problem on WebKit when selecting string (#3).
 
 ### 2.4
 
@@ -91,6 +96,13 @@ An error with search commands in GitHub example is fixed.
 ### 2.0
 
 Considered as the first version, you don't want to see version 1 :)
+
+Acknowledgments
+---------------
+
+Warm thanks to [shitwizard](https://github.com/shitwizard) improving the plugin.
+
+Refer to links to issues within the changelog or commit messages.
 
 Misc
 ----

@@ -42,6 +42,24 @@
 		among : among,
 		escape : escape,
 		listeners : {
+			command : function(name, help, execute, complete) {
+				var commands = {};
+				commands[name] = help;
+				
+				return {
+					commands : commands,
+					complete : function(args) {
+						if (args[0] == name && complete) {
+							return complete(args);
+						}
+					},
+					execute : function(args) {
+						if (args[0] == name) {
+							return execute(args);
+						}
+					}
+				};
+			},
 			firebug : {
 				commands : {},
 
@@ -990,7 +1008,6 @@
 
 				input.css('top', content.children(":last").position().top);
 				input.focus();
-				input.val(input.val());
 
 				updateScrollbar();
 			}
@@ -1004,7 +1021,7 @@
 				input.css({
 					top : top,
 					left : left
-				}).width(content.width() - left);
+				}).width(content.width() - left - 1);
 			}
 
 			function showInput(val) {
@@ -1700,7 +1717,7 @@
 			content = $('<div class="content"></div>');
 			terminal.append(content);
 
-			var arrowUp = $('<div class="scrollarrow" style="top:0">&uarr;</div>');
+			var arrowUp = $('<div class="scrollarrow" style="top:0">&#9650;</div>');
 			terminal.append(arrowUp);
 			arrowUp.click(function() {
 				content.scrollTop(content.scrollTop() - character.height);
@@ -1709,7 +1726,7 @@
 				return false;
 			});
 
-			var arrowDown = $('<div class="scrollarrow" style="bottom:0">&darr;</div>');
+			var arrowDown = $('<div class="scrollarrow" style="bottom:0">&#9660;</div>');
 			terminal.append(arrowDown);
 			arrowDown.click(function() {
 				content.scrollTop(content.scrollTop() + character.height);
@@ -1772,9 +1789,10 @@
 
 					default:
 						currentHistory = null;
-						focusInput();
 						return true;
 				}
+				
+				focusInput();
 				return false;
 			});
 
@@ -1838,9 +1856,12 @@
 				content.scrollTop(content.scrollTop() - delta * character.height);
 				terminal.children("input").css('top', content.children(":last").position().top);
 				updateScrollbar();
+				
+				e.preventDefault();
+				e.stopPropagation();
 			};
 			
-			var mousewheelName =(/Firefox/i.test(navigator.userAgent))? 'DOMMouseScroll' : 'mousewheel';
+			var mousewheelName = $.browser.mozilla ? 'DOMMouseScroll' : 'mousewheel';
 			
 			if (terminal[0].attachEvent) {
 				terminal[0].attachEvent('on' + mousewheelName, mousewheel);
