@@ -1,0 +1,20 @@
+jquery.terminal example - JSON-RPC
+
+This example do NOT attempt to explain how to build a JSON-RPC endpoint.
+
+You need Node.js to run this example because of the same origin policy.
+
+	node index.js
+
+then go on
+
+	http://localhost:8080/
+
+The  log  command sends data to the server through the endpoint,
+that simply displays them on the console.
+
+It uses a modified version of https://github.com/andris9/node-jsonrpc
+(only on the server side).
+
+You may use other technologies as well
+(see http://json-rpc.org/wiki/implementations).

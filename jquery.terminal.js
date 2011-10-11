@@ -15,7 +15,7 @@
  * <li>command pipelining and other operators</li>
  * <li>context-aware completion</li>
  * <li>handles asynchronous requests</li>
- * <li>uses cookie information if jQuery.cookie is available</li>
+ * <li>interfaceable with other jQuery plugins</li>
  * </ul>
  */
 
@@ -30,48 +30,96 @@
 				return value;
 			}
 		});
-	}
-	;
+	};
 
 	function escape(str) {
 		return new String(str).replace('\\', '\\\\').replace(' ', '\\ ');
-	}
-	;
+	};
 
+	var listeners = {
+		command : function(name, help, execute, complete) {
+			var commands = {};
+			commands[name] = help;
+			
+			return {
+				commands : commands,
+				complete : function(args) {
+					if (args[0] == name && complete) {
+						return complete(args);
+					}
+				},
+				execute : function(args) {
+					if (args[0] == name) {
+						return execute(args);
+					}
+				}
+			};
+		},
+		firebug : {
+			commands : {},
+			complete : function(args) {
+				console.log('complete:', args);
+			},
+			execute : function(args) {
+				console.log('execute:', args);
+			}
+		}
+	};
+	
+	if ($.jsonRPC) {
+		listeners.jsonrpc = function(endpoint, namespace, commands) {
+			if (!commands) {
+				commands = namespace;
+				namespace = null;
+			}
+			
+			return {
+				commands : commands,
+				complete : function(args, async) {
+					if (commands[args[0]]) {
+						$.jsonRPC.withOptions({
+							endPoint: endpoint,
+							namespace: namespace
+						}, function() {
+							this.request('complete', {
+								params: [args],
+								success: function(result) {
+									async(result.result);
+								},
+								error: function(result) {
+								}
+							});
+						});
+						return true;
+					}
+				},
+				execute : function(args, async) {
+					if (commands[args[0]]) {
+						$.jsonRPC.withOptions({
+							endPoint: endpoint,
+							namespace: namespace
+						}, function() {
+							this.request('execute', {
+								params: [args],
+								success: function(result) {
+									async(result.result);
+								},
+								error: function(result) {
+									async(result.error);
+								}
+							});
+						});
+						return true;
+					}
+				}
+			};
+		};
+	}
+	
 	$.terminal = {
 		among : among,
 		escape : escape,
-		listeners : {
-			command : function(name, help, execute, complete) {
-				var commands = {};
-				commands[name] = help;
-				
-				return {
-					commands : commands,
-					complete : function(args) {
-						if (args[0] == name && complete) {
-							return complete(args);
-						}
-					},
-					execute : function(args) {
-						if (args[0] == name) {
-							return execute(args);
-						}
-					}
-				};
-			},
-			firebug : {
-				commands : {},
-
-				complete : function(args) {
-					console.log('complete:', args);
-				},
-
-				execute : function(args) {
-					console.log('execute:', args);
-				}
-			}
-		}
+		listeners : listeners
 	};
 
 	var defaults = {
@@ -242,6 +290,7 @@
 					'slice' : [ 'Select a part of the arguments.', '', 'Usage: \tbselect\tb \tustart\tu \tuend\tu \tuargument\tu ...', '', 'Selects a part of the \tuargument\tus in range [\tustart\tu,\tuend\tu[ (starting from \ti1\ti). \tuend\tu may be set to \ti0\ti to select arguments from \tustart\tu to the end.' ],
 					'sort' : [ 'Sorts arguments alphabetically and ascending.', '', 'Usage: \tbsort\tb \tuargument\tu [...]' ],
 					'split' : [ 'Splits arguments.', '', 'Usage: \tbsplit\tb \tuseparator\tu \tuargument\tu [...]' ],
+					'sum' : [ 'Sums arguments.', '', 'Usage: \tbsum\tb \tuargument\tu ...' ],
 					'test' : [ 'Tests an expression.', '', 'Usage: \tbtest\tb \tuexpression\tu', '', 'Example: \txtest 1 + 1 == 2 && echo ok || echo problem!\t-test 1 + 1 == 2 && echo ok || echo problem!\tx' ],
 					'unset' : [ 'Removes a variable.', '', 'Usage: \tbunset\tb \tuname\tu' ]
 				},
@@ -515,7 +564,17 @@
 							} else {
 								throw 'split: separator required.';
 							}
-
+							
+						case 'sum':
+							var sum = 0;
+							for (var i = 1; i < args.length; ++i) {
+								var n = parseInt(args[i]);
+								if (!isNaN(n)) {
+									sum += n;
+								}
+							}
+							return [ sum.toString() ];
+							
 						case 'test':
 							var expression = args.slice(1).join('');
 							try {
@@ -1240,7 +1299,9 @@
 
 			// at the end of execute
 			function endExecution(result) {
-				if (typeof result != 'object') {
+				if (!result) {
+					result = [];
+				} else if (typeof result != 'object') {
 					result = [ result.toString() ];
 				}
 
@@ -1279,6 +1340,10 @@
 			function exec(node, args) {
 				// THIS node is waiting for the result!
 				if (node.result === true) {
+					if (!asyncResult) {
+						var command = split(node.command);
+						throw 'Unknown command \tb' + command[0] + '\tb.';
+					}
 					node.result = asyncResult;
 				}
 
@@ -1445,7 +1510,7 @@
 				} catch (e) {
 					result = e;
 				}
-
+				
 				if (result !== true) {
 					endExecution(result);
 				}

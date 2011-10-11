@@ -1,0 +1,34 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+<script src="http://code.jquery.com/jquery-1.6.4.min.js"></script>
+<script src="https://raw.github.com/datagraph/jquery-jsonrpc/master/jquery.jsonrpc.js"></script>
+<script src="jquery.terminal.js"></script>
+<script>
+	$(function() {
+		$('#terminal').terminal({
+			listeners : [ $.terminal.listeners.jsonrpc('endpoint', {
+				'log' : [ 'Logs arguments on the server.', '', 'Usage: \tblog\tb \tuargument\tu ...' ]
+			}) ],
+			welcome : 'jquery.terminal example - JSON-RPC\n\
+This terminal is able to communicate with a remote server.\n\
+Try \txecho hello world | log\t-echo hello world | log\tx.'
+		});
+	});
+</script>
+<link rel="stylesheet" type="text/css" href="jquery.terminal.css" />
+<style type="text/css">
+#terminal {
+	position: absolute;
+	top: 0;
+	left: 0;
+	width: 100%;
+	height: 100%;
+}
+</style>
+</head>
+<body>
+<div id="terminal"></div>
+</body>
+</html>

@@ -32,9 +32,13 @@ At any moment, press TAB and you will see suggestions which fit well in the cont
 
 Commands can give result either synchronously or asynchronously, which comes in handy when they deal with AJAX requests. Works for completion too!
 
-### Uses cookie information if jQuery.cookie is available
+### Interfaceable with other jQuery plugins
 
-Simply include `jquery.cookie.js` before `jquery.terminal.js` and that's it. With the cookie plugin, the command history and variables will be automatically saved and restored. You may need `clear` to erase these variables.
+With the [jQuery cookie](https://github.com/carhartl/jquery-cookie) plugin, the command history and variables will be automatically saved and restored. You may need `clear` to erase these variables.
+
+The [jQuery JSON RPC](https://github.com/datagraph/jquery-jsonrpc) plugin provides a built-in listener `jsonrpc` to easily call server-side functions.
+
+Simply include the files before `jquery.terminal.js` and that's it. 
 
 Getting started
 ---------------
@@ -65,6 +69,9 @@ Changelog
 * Adds built-in listener `command`.
 * Changes arrow style (#2).
 * Fixes input problem on WebKit when selecting string (#3).
+* Adds built-in listener `jsonrpc` when jQuery JSON RPC is available.
+* Adds an example `jsonrpc`.
+* Adds the command `sum`.
 
 ### 2.4
 
